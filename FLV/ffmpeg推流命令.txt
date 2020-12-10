@@ -1,0 +1,14 @@
+flv 推流命令  改一下对应的ip即可
+ffmpeg -re -rtsp_transport tcp -i "rtsp://admin:hiwei713@192.168.0.126:554/h264/ch1/main/av_stream" -f flv -vcodec libx264 -vprofile baseline -acodec aac -tune zerolatency -preset ultrafast -ar 44100 -strict -2 -ac 1 -f flv -s 1980x1080 -q 10 "rtmp://192.168.223.131:1935/live/home"
+
+
+前端接受的  http://192.168.0.190:8007/live?port=1935&app=live&stream=home
+
+
+
+ m3u8 （hls）0推流命令  改一下对应的ip即可
+
+ffmpeg -i "rtsp://admin:ajb123456@192.168.10.36" -c copy -f hls -hls_time 2.0 -hls_list_size 1 -hls_wrap 15 F:\nginx-rtmp-win32-master\temp\hls\room.m3u8
+rtmp://192.168.0.190:8080/hls/room.m3u8
+
+

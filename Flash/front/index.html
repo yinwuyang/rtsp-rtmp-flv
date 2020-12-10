@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="./video/video.min.js"></script>
+
+  <link href="./video/video-js.min.css" rel="stylesheet" type="text/css" />
+  <!-- <script src="./vue-visibility.js"></script> -->
+  <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+  <style>
+    #my-player {
+      width: 800px;
+      height: 500px;
+    }
+  </style>
+  <body>
+    <div id="app">
+      <video id="my-player" class="video-js">
+        <source src="rtmp://192.168.0.190/live/room" type="rtmp/flv" />
+      </video>
+    </div>
+  </body>
+  <script>
+    new Vue({
+      el: "#app",
+      data() {
+        return {
+          flvPlayer1: null,
+        };
+      },
+      created() {
+        setTimeout(() => {
+          var flash = this.flashChecker();
+          console.log("this.flashChecker()", flash);
+          if (!flash.f) {
+            console.log("this.flashChecker()", flash);
+            if (confirm("您的浏览器未安装Flash插件，是否现在安装？")) {
+              window.location.href = "http://get.adobe.com/cn/flashplayer/";
+              // window.location.href =
+              //   "https://www.flash.cn/cdm/latest/flashplayerpp_install_cn.exe";
+            }
+          }
+          if (flash.v < 33 && flash.v) {
+            if (confirm("您的Flash插件版本过低，是否更新？")) {
+              window.location.href =
+                "https://www.flash.cn/cdm/latest/flashplayerpp_install_cn.exe";
+            }
+          }
+        }, 1000);
+      },
+      mounted() {
+        this.initVideo("my-player");
+      },
+      methods: {
+        initVideo(id) {
+          //初始化视频方法
+          let videoPlayer = videojs(
+            id,
+            {
+              muted: true,
+              autoplay: true,
+              preload: "auto",
+              dataSetup: {},
+            },
+            function onPlayerReady() {
+              // Video.log("Your player is ready!");
+              // In this context, `this` is the player that was created by Video.js.
+              this.play(); //进行播放
+              console.log("加载完 播放");
+              // How about an event listener?
+            }
+          );
+          videoPlayer.play();
+        },
+        flashChecker() {
+          var hasFlash = 0; //是否安装了flash
+          var flashVersion = 0; //flash版本
+          if (document.all) {
+            var swf = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
+            if (swf) {
+              hasFlash = 1;
+              VSwf = swf.GetVariable("$version");
+              flashVersion = parseInt(VSwf.split(" ")[1].split(",")[0]);
+            }
+          } else {
+            if (navigator.plugins && navigator.plugins.length > 0) {
+              var swf = navigator.plugins["Shockwave Flash"];
+              if (swf) {
+                hasFlash = 1;
+                var words = swf.description.split(" ");
+                for (var i = 0; i < words.length; ++i) {
+                  if (isNaN(parseInt(words[i]))) continue;
+                  flashVersion = parseInt(words[i]);
+                }
+              }
+            }
+          }
+          return { f: hasFlash, v: flashVersion };
+        },
+      },
+    });
+  </script>
+</html>
